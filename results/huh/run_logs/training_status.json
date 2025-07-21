@@ -1,0 +1,29 @@
+{
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 1920,
+                "file_path": "results\\huh\\EnemyShip\\EnemyShip-1920.onnx",
+                "reward": null,
+                "creation_time": 1747345106.6805692,
+                "auxillary_file_paths": [
+                    "results\\huh\\EnemyShip\\EnemyShip-1920.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1920,
+            "file_path": "results\\huh\\EnemyShip.onnx",
+            "reward": null,
+            "creation_time": 1747345106.6805692,
+            "auxillary_file_paths": [
+                "results\\huh\\EnemyShip\\EnemyShip-1920.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.7.0+cpu"
+    }
+}

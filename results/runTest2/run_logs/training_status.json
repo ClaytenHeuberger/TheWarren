@@ -1,0 +1,38 @@
+{
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 499983,
+                "file_path": "results\\runTest2\\EnemyShip\\EnemyShip-499983.onnx",
+                "reward": null,
+                "creation_time": 1747344241.5334861,
+                "auxillary_file_paths": [
+                    "results\\runTest2\\EnemyShip\\EnemyShip-499983.pt"
+                ]
+            },
+            {
+                "steps": 518351,
+                "file_path": "results\\runTest2\\EnemyShip\\EnemyShip-518351.onnx",
+                "reward": null,
+                "creation_time": 1747344468.5562322,
+                "auxillary_file_paths": [
+                    "results\\runTest2\\EnemyShip\\EnemyShip-518351.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 518351,
+            "file_path": "results\\runTest2\\EnemyShip.onnx",
+            "reward": null,
+            "creation_time": 1747344468.5562322,
+            "auxillary_file_paths": [
+                "results\\runTest2\\EnemyShip\\EnemyShip-518351.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.7.0+cpu"
+    }
+}

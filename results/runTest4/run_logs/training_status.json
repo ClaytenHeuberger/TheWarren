@@ -1,0 +1,29 @@
+{
+    "EnemyShip": {
+        "checkpoints": [
+            {
+                "steps": 2560,
+                "file_path": "results\\runTest4\\EnemyShip\\EnemyShip-2560.onnx",
+                "reward": null,
+                "creation_time": 1747345041.7610824,
+                "auxillary_file_paths": [
+                    "results\\runTest4\\EnemyShip\\EnemyShip-2560.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2560,
+            "file_path": "results\\runTest4\\EnemyShip.onnx",
+            "reward": null,
+            "creation_time": 1747345041.7610824,
+            "auxillary_file_paths": [
+                "results\\runTest4\\EnemyShip\\EnemyShip-2560.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.7.0+cpu"
+    }
+}

@@ -1,0 +1,74 @@
+{
+    "name": "JoystickControls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "5b5ff4c9-f92e-4798-bdc5-ca2ee68d86a7",
+            "actions": [
+                {
+                    "name": "PitchRoll",
+                    "type": "Value",
+                    "id": "e9523143-aa8b-40d7-8341-e8ca5aef3574",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "b12daebf-aa78-4079-9c89-22927c1cdfe1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Thrust",
+                    "type": "Button",
+                    "id": "f35d7458-50c8-4ffb-a2ad-8143b618330d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "fdb4358d-7057-4974-946a-86655c2f7d57",
+                    "path": "<Joystick>/stick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PitchRoll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7149fb59-3e51-40e3-8e50-a6a20cce59ef",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9b6d9a9a-43cd-4d80-80d0-eecbc79b93b5",
+                    "path": "<HID::Microsoft Microsoft SideWinder Precision Pro (USB)>/button8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Thrust",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - PathMaker
+  - Tunnel
+  - Rock
+  - Asteroid
+  - Bullet
+  - EnemyBullet
+  - Shield
+  - EnemyShip
+  - Cave
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Tunnel
+  - Water
+  - UI
+  - Player
+  - Asteroid
+  - EnvPost
+  - PlayerPost
+  - Bullet
+  - Enemy
+  - Crosshair
+  - Distort
+  - EnemyBullet
+  - EnemyML
+  - Shield
+  - DirectionalLight
+  - Cave
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

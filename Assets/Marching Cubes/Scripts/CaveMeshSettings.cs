@@ -1,0 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public static class CaveMeshSettings
+{
+    public static float heightThreshold = 0.48f;
+    public static float noiseScale = 0.6f;
+    public static int chunkSize = 8;
+}
