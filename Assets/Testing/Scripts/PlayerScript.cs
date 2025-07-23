@@ -10,6 +10,7 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Input Variables")]
     public bool useJoystick = false;
+    public bool mouseMode = false;
     [SerializeField] private float pitchTorque = 3;
     [SerializeField] private float rollTorque = 9;
     [SerializeField] private float engineMaxPower = 400;
@@ -40,6 +41,10 @@ public class PlayerScript : MonoBehaviour
     float FOVStart;
     [SerializeField] public float thrustRatio = 1;
 
+
+    Vector2 mousePos = Vector2.zero;
+    Vector2 startMousePos = Vector2.zero;
+    Vector2 prevMousePos = Vector2.zero;
     private void Awake()
     {
         controls = new JoystickControls();
@@ -49,6 +54,9 @@ public class PlayerScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         gameHandler = FindObjectOfType<GameHandler>(); 
         FOVStart = cam.fieldOfView;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        startMousePos = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 
     // Update is called once per frame
@@ -137,26 +145,48 @@ public class PlayerScript : MonoBehaviour
         else if(gameHandler == null || gameHandler.started)
         {
 
-            if (Input.GetKey("w"))
+            if (mouseMode)
             {
-                rb.AddTorque(transform.right * pitchTorque * Time.deltaTime * 100);
 
-            }
-            if (Input.GetKey("s"))
-            {
-                rb.AddTorque(-transform.right * pitchTorque * Time.deltaTime * 100);
-            }
+                mousePos += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-            if (Input.GetKey("a"))
-            {
-                rb.AddTorque(transform.forward * rollTorque * Time.deltaTime * 100);
-                rb.AddTorque(-transform.up * rollTorque * Time.deltaTime * 20);
-            }
-            if (Input.GetKey("d"))
-            {
-                rb.AddTorque(-transform.forward * rollTorque * Time.deltaTime * 100);
-                rb.AddTorque(transform.up * rollTorque * Time.deltaTime * 20);
+                Vector2 offset = mousePos - startMousePos;
+                Vector2 clampedOffset = Vector2.ClampMagnitude(offset, Mathf.Min(rollTorque, pitchTorque));
+                if (offset.magnitude > Mathf.Min(rollTorque, pitchTorque))
+                {
+                    // Shift center so the stick remains in bounds
+                    startMousePos += offset - clampedOffset;
+                }
 
+                // Now use the offset from the center for torque
+                Vector2 rollPitch = clampedOffset;
+
+                rb.AddTorque(transform.right * rollPitch.y * Time.deltaTime * 150);
+                rb.AddTorque(-transform.forward * rollPitch.x * Time.deltaTime * 200);
+            }
+            else
+            {
+                if (Input.GetKey("w"))
+                {
+                    rb.AddTorque(transform.right * pitchTorque * Time.deltaTime * 100);
+
+                }
+                if (Input.GetKey("s"))
+                {
+                    rb.AddTorque(-transform.right * pitchTorque * Time.deltaTime * 100);
+                }
+
+                if (Input.GetKey("a"))
+                {
+                    rb.AddTorque(transform.forward * rollTorque * Time.deltaTime * 100);
+                    rb.AddTorque(-transform.up * rollTorque * Time.deltaTime * 20);
+                }
+                if (Input.GetKey("d"))
+                {
+                    rb.AddTorque(-transform.forward * rollTorque * Time.deltaTime * 100);
+                    rb.AddTorque(transform.up * rollTorque * Time.deltaTime * 20);
+
+                }
             }
 
         }

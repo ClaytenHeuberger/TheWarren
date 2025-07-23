@@ -34,8 +34,8 @@ public class TunnelEnemyAI : MonoBehaviour
             forwardHit.distance = sightDistance;
         
 
-        int ringCount = 15;
-        int raysPerRing = 15;
+        int ringCount = 12;
+        int raysPerRing = 12;
         float verticalAngleRange = 45f;
         float longestDistance = correctionDistance;
 
@@ -94,11 +94,10 @@ public class TunnelEnemyAI : MonoBehaviour
                 }
 
 
-                
-
-                //Debug.DrawRay(transform.position, direction * sightDistance, Color.cyan);
+                Debug.DrawRay(transform.position, direction * sightDistance, Color.cyan);
             }
         }
+
 
         if (numObstacles > 0)
         {
