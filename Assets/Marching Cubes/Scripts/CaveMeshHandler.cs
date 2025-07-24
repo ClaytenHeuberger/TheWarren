@@ -45,20 +45,32 @@ public class CaveMeshHandler : MonoBehaviour
 
     public static float GetCurrentHeight(Vector3 position)
     {
+        float noiseMod = 0f;
 
-        if (Vector3.Distance(position, CaveMeshHandler.playerStartPos) < 20)
+        
+        if (Vector3.Distance(position, playerStartPos) < 20)
         {
             return 1;
         }
+        
+        // Clear area for outposts
+        float radius = 20f;
+        for (int i = 0;i < Outposts.positions.Count; i++)
+        {
+            if(Vector3.Distance(position, Outposts.positions[i]) < radius)
+            {
+                return 1;
+            }
+        }
 
-        float chunkSize = CaveMeshSettings.chunkSize;
         float noiseScale = CaveMeshSettings.noiseScale;
+        float chunkSize = CaveMeshSettings.chunkSize;
 
-        float noise = PerlinNoise3D((float)(position.x) / chunkSize * noiseScale, (float)(position.y) / chunkSize * noiseScale, (float)(position.z) / chunkSize * noiseScale);
-        noise += PerlinNoise3D((float)(position.x) / chunkSize * (noiseScale / 1.5f), (float)(position.y) / chunkSize * (noiseScale / 1.5f), (float)(position.z) / chunkSize * (noiseScale / 1.5f));
-        noise += PerlinNoise3D((float)(position.x) / chunkSize * (noiseScale * 1.2f), (float)(position.y) / chunkSize * (noiseScale * 1.2f), (float)(position.z) / chunkSize * (noiseScale * 1.2f));
+        float noise = PerlinNoise3D(position.x / chunkSize * noiseScale, position.y / chunkSize * noiseScale, position.z / chunkSize * noiseScale);
+        noise += PerlinNoise3D(position.x / chunkSize * (noiseScale / 1.5f), position.y / chunkSize * (noiseScale / 1.5f), position.z / chunkSize * (noiseScale / 1.5f));
+        noise += PerlinNoise3D(position.x / chunkSize * (noiseScale * 1.2f), position.y / chunkSize * (noiseScale * 1.2f), position.z / chunkSize * (noiseScale * 1.2f));
         noise /= 3;
-
+        noise += noiseMod;
 
 
         return noise;

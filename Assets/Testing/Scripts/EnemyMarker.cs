@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class EnemyMarker : MonoBehaviour
 {
     public Transform target;
+    [SerializeField] private Color markerColor = Color.red;
     [SerializeField] private Sprite onScreen;
     [SerializeField] private Sprite offScreen;
     [SerializeField] private AudioManager audioManager;
@@ -25,7 +26,7 @@ public class EnemyMarker : MonoBehaviour
         this_image = GetComponent<Image>();
         audioManager = FindObjectOfType<AudioManager>();
 
-        this_image.color = Color.red * 2f;
+        this_image.color = markerColor * 2f;
 
         Canvas canvas = FindObjectOfType<Canvas>();
         transform.SetParent(canvas.transform);

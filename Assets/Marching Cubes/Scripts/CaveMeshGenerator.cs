@@ -7,6 +7,10 @@ using UnityEngine.Rendering;
 using System.Collections.Concurrent;
 using System.Threading;
 using Unity.VisualScripting;
+using Unity.Jobs;
+using Unity.Burst;
+using System.ComponentModel;
+using JetBrains.Annotations;
 public struct GeneratedMeshData
 {
     public Vector3Int position;
@@ -54,6 +58,10 @@ public class CaveMeshGenerator : MonoBehaviour
         CaveMeshHandler.generators.Add(this);
 
         CaveMeshHandler.meshObject = meshObject;
+
+        if (isMainPlayer)
+            CaveMeshHandler.playerStartPos = player.transform.position;
+
         UpdatePlayerPos();
 
     }
@@ -61,11 +69,8 @@ public class CaveMeshGenerator : MonoBehaviour
     {
 
         if (isMainPlayer)
-        {
-            CaveMeshHandler.playerStartPos = player.transform.position;
-
             CaveMeshHandler.Initialize();
-        }
+
         meshFilter = GetComponent<MeshFilter>();
 
         /*
@@ -82,50 +87,42 @@ public class CaveMeshGenerator : MonoBehaviour
         }
         meshIndex = 0;
         */
-
-
     }
 
 
     private void Update()
     {
 
-        for (int i = 0;i < 2;i++)
-        {
-            bool found = false;
-            chunkIndex = 0;
-            while (chunkIndex < offsets.Count - 1)
+
+        bool found = false;
+        chunkIndex = 0;
+        while (chunkIndex < offsets.Count - 1)
+        {     
+            currentPos = offsets[chunkIndex] + GetPlayerChunkPosition() * CaveMeshSettings.chunkSize;
+            if (!CaveMeshHandler.positions.Contains(currentPos))
             {
-                
-                currentPos = offsets[chunkIndex] + GetPlayerChunkPosition() * CaveMeshSettings.chunkSize;
-
-                if (!CaveMeshHandler.positions.Contains(currentPos))
-                {
-                    found = true;
-                    CaveMeshHandler.positions.Add(currentPos);
-                    break;
-                }
-                
-                chunkIndex++;
-
-            }
-
-            if (found)
-            {
-                SetHeights();
-                MarchCubes();
-                SetMesh();
-            }
-
-            // Unload out of bounds chunks when player moves
-            if (GetPlayerChunkPosition() != currentPlayerChunkPosition && Time.frameCount > 10)
-            {
-                //UpdatePlayerPos();
-                CaveMeshHandler.UnloadChunks();
-            }
-
-            currentPlayerChunkPosition = GetPlayerChunkPosition();
+                found = true;
+                CaveMeshHandler.positions.Add(currentPos);
+                break;
+            }   
+            chunkIndex++;
         }
+
+        if (found)
+        {
+            SetHeights();
+            MarchCubes();
+            SetMesh();
+        }
+
+        // Unload out of bounds chunks when player moves
+        if (GetPlayerChunkPosition() != currentPlayerChunkPosition && Time.frameCount > 10)
+        {
+            //UpdatePlayerPos();
+            CaveMeshHandler.UnloadChunks();
+        }
+
+        currentPlayerChunkPosition = GetPlayerChunkPosition();
 
     }
 
@@ -161,11 +158,7 @@ public class CaveMeshGenerator : MonoBehaviour
                     if (use3DNoise)
                     {
                         Vector3 pos = new Vector3(x + currentPos.x, y + currentPos.y, z + currentPos.z);
-                        float currentHeight = CaveMeshHandler.GetCurrentHeight(pos);
-
-                        heights[x, y, z] = currentHeight;
-
-
+                        heights[x, y, z] = CaveMeshHandler.GetCurrentHeight(pos);
                     }
                 }
             }
@@ -204,8 +197,8 @@ public class CaveMeshGenerator : MonoBehaviour
 
                     for (int i = 0; i < 8; i++)
                     {
-                        Vector3Int corner = new Vector3Int(x, y, z) + MarchingTable.Corners[i];
-                        cubeCorners[i] = heights[corner.x, corner.y, corner.z];
+                        Vector3Int offset = MarchingTable.Corners[i];
+                        cubeCorners[i] = heights[x + offset.x, y + offset.y, z + offset.z];
                     }
 
                     MarchCube(new Vector3(x, y, z), cubeCorners);
@@ -336,8 +329,7 @@ public class CaveMeshGenerator : MonoBehaviour
         );
     }
 
+    
+
 
 }
-
-
-

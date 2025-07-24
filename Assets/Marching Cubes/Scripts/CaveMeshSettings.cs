@@ -5,6 +5,6 @@ using UnityEngine;
 public static class CaveMeshSettings
 {
     public static float heightThreshold = 0.48f;
-    public static float noiseScale = 0.6f;
-    public static int chunkSize = 8;
+    public static float noiseScale = 0.9f;
+    public static int chunkSize = 12;
 }
