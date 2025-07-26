@@ -18,10 +18,14 @@ public static class GradientDescent
 
         for (int i = 0; i < maxSteps; i++)
         {
-            float maxNoise = PerlinNoise3D(currentPos);
+
+            float maxNoise = 0f;
             Vector3 bestDir = Vector3.zero;
+
+
             for (int j = 0; j < 6; j++)
             {
+
                 float noise = -1f;
                 Vector3 dir = Vector3.zero;
                 switch (j)
@@ -56,12 +60,13 @@ public static class GradientDescent
                 {
                     maxNoise = noise;
                     bestDir = dir;
+
                 }
             }
 
 
             currentPos += bestDir;
-            Debug.Log(maxNoise);
+
             if (bestDir == Vector3.zero)
                 return currentPos;
 
@@ -91,7 +96,7 @@ public class OutpostFinder : MonoBehaviour
     {
         positions = new List<Vector3>();
 
-        Vector3 outpost = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.005f, 10, 500);
+        Vector3 outpost = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.0005f, 10, 500);
         Outposts.positions.Add(outpost);
         debug.position = outpost;
     }

@@ -158,7 +158,12 @@ public class CaveMeshGenerator : MonoBehaviour
                     if (use3DNoise)
                     {
                         Vector3 pos = new Vector3(x + currentPos.x, y + currentPos.y, z + currentPos.z);
-                        heights[x, y, z] = CaveMeshHandler.GetCurrentHeight(pos);
+                        float height = CaveMeshHandler.GetCurrentHeight(pos);
+
+                        if(isMainPlayer)
+                            CaveDetailTools.AddDetails(pos, height);
+
+                        heights[x, y, z] = height;
                     }
                 }
             }

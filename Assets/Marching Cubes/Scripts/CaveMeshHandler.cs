@@ -28,6 +28,7 @@ public class CaveMeshHandler : MonoBehaviour
             meshObjects.Add(newMesh);
             newMesh.SetActive(false);
         }
+
     }
     public static void UnloadChunks()
     {
@@ -71,7 +72,6 @@ public class CaveMeshHandler : MonoBehaviour
         noise += PerlinNoise3D(position.x / chunkSize * (noiseScale * 1.2f), position.y / chunkSize * (noiseScale * 1.2f), position.z / chunkSize * (noiseScale * 1.2f));
         noise /= 3;
         noise += noiseMod;
-
 
         return noise;
     }

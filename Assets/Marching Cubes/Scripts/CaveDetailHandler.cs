@@ -1,41 +1,118 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
 public class Biome
 {
-    public string name;
-    public Color caveColor;
+    public string _name;
+    public Color caveColor; //Note: All colors have to have an alpha of '1', or it throws errors
     public Color fogColor;
     public float rarity = 1f;
     public ParticleSystem ambientParticle;
     public GameObject oreObject;
     [HideInInspector]
-    public List<GameObject> oreObjects;
+    public Queue<GameObject> oreObjects = new Queue<GameObject>();
+}
 
+public static class CaveDetailTools
+{
 
-    public GameObject GetOre()
+    public static Gradient biomeGradient;
+    public static Biome[] biomes;
+    public static float biomeScale;
+    public static float oreScale;
+    public static float pillarScale;
+    public static float oreThreshold;
+    public static float pillarThreshold;
+    public static Biome currentBiome;
+    public static Biome GetBiomeByPosition(Vector3 position)
     {
-        for(int i = 0; i < oreObjects.Count; i++)
+        float noise = GetBiomeNoise(position);
+        Color matchingColor = biomeGradient.Evaluate(noise);
+
+        for (int i = 0; i < biomes.Length; i++)
         {
-            if (!oreObjects[i].activeSelf)
-                return oreObjects[i];
+            if (biomes[i].caveColor == matchingColor)
+            {
+                return biomes[i];
+
+            }
         }
 
         return null;
     }
+
+    public static void AddDetails(Vector3 position, float height)
+    {
+        currentBiome = GetBiomeByPosition(position);
+        if (currentBiome != null)
+        {
+            // ORE //
+            float oreNoise = GetOreNoise(position);
+            if (Mathf.Abs(height - CaveMeshSettings.heightThreshold) < 0.02f && oreNoise > oreThreshold)
+            {
+                GameObject ore = currentBiome.oreObjects.Dequeue();
+
+                if (ore != null)
+                {
+                    currentBiome.oreObjects.Enqueue(ore);
+                    ore.SetActive(false);
+                    ore.transform.position = position;
+                    ore.transform.rotation = Quaternion.Euler(new Vector3(height * 10000f, oreNoise * 10000f, height * oreNoise * 10000f));
+                    ore.transform.localScale = Vector3.one * (1 - (oreNoise - oreThreshold));
+                    ore.SetActive(true);
+                }
+            }
+
+            // PILLARS //
+
+            float pillarNoise = GetPillarNoise(position);
+            if (height > 0.9f && pillarNoise > pillarThreshold)
+            {
+
+            }
+        }
+
+    }
+
+    public static float GetBiomeNoise(Vector3 position)
+    {
+        return Noise.get3DPerlinNoise(position, biomeScale) + 0.5f;
+    }
+    public static float GetOreNoise(Vector3 position)
+    {
+        return Noise.get3DPerlinNoise(position, oreScale) + 0.5f;
+    }
+
+    public static float GetPillarNoise(Vector3 position)
+    {
+        return Noise.get3DPerlinNoise(position, pillarScale) + 0.5f;
+    }
+
 }
 public class CaveDetailHandler : MonoBehaviour
 {
     [SerializeField] private Transform player;
+    [SerializeField] private Material caveMat;
+
+    [Header("Biomes")]
     [SerializeField] private float biomeScale = 0.005f;
     [SerializeField] private float easeRate = 0.02f;
-    [SerializeField] private Material caveMat;
-    [SerializeField] private int oresPerBiome = 20;
-    public float oreThreshold = 0.05f;
     public Biome[] biomes;
+
+    [Header("Ores")]
+    [SerializeField] private int oresPerBiome = 20;
+    [SerializeField] private float oreScale = 5.15329f;
+    [SerializeField] private float oreThreshold = 20.15329f;
+
+    [Header("Pillars")]
+    [SerializeField] private float pillarScale = 300.15213f;
+    [SerializeField] private float pillarThreshold = 1.33f;
+
 
     Gradient biomeGradient;
     Biome currentBiome;
@@ -71,13 +148,16 @@ public class CaveDetailHandler : MonoBehaviour
             keys[keyIndex].color = biomes[i].caveColor;
             keyIndex++;
 
+        }
 
-            for(int j = 0; j < oresPerBiome; j++)
+        for(int i = 0;i < biomes.Length;i++)
+        {
+            for (int j = 0; j < oresPerBiome; j++)
             {
                 GameObject newOre = Instantiate(biomes[i].oreObject);
                 newOre.SetActive(false);
                 newOre.transform.parent = transform;
-                biomes[i].oreObjects.Add(newOre);
+                biomes[i].oreObjects.Enqueue(newOre);
             }
         }
 
@@ -85,13 +165,24 @@ public class CaveDetailHandler : MonoBehaviour
         var alphas = new GradientAlphaKey[0]; //No alpha
         biomeGradient.SetKeys(keys, alphas);
 
-        float noise = Noise.get3DPerlinNoise(player.position, biomeScale) + 0.5f;
+        float noise = CaveDetailTools.GetBiomeNoise(player.position);
 
-        GetBiomeByNoise(noise).ambientParticle.Play();
+        #region tooDumbToLook
+        CaveDetailTools.biomeGradient = biomeGradient;
+        CaveDetailTools.biomes = biomes;
+        CaveDetailTools.biomeScale = biomeScale;
+        CaveDetailTools.oreScale = oreScale;
+        CaveDetailTools.oreThreshold = oreThreshold;
+        CaveDetailTools.pillarScale = pillarScale;
+        CaveDetailTools.pillarThreshold = pillarThreshold;
+        #endregion
+
+
+        CaveDetailTools.GetBiomeByPosition(player.position).ambientParticle.Play();
     }
     private void Update()
     {
-        float noise = Noise.get3DPerlinNoise(player.position, biomeScale) + 0.5f;
+        float noise = CaveDetailTools.GetBiomeNoise(player.position);
 
         Color col = biomeGradient.Evaluate(noise);
         caveMat.SetColor("_MainColor", col);
@@ -99,8 +190,8 @@ public class CaveDetailHandler : MonoBehaviour
         cam.backgroundColor = col;
 
 
-        if(GetBiomeByNoise(noise) != null)
-            currentBiome = GetBiomeByNoise(noise);
+        if(CaveDetailTools.GetBiomeByPosition(player.position) != null)
+            currentBiome = CaveDetailTools.GetBiomeByPosition(player.position);
 
         if (previousBiome != null && currentBiome != previousBiome)
         {
@@ -109,49 +200,16 @@ public class CaveDetailHandler : MonoBehaviour
 
         }
 
-        if (GetBiomeByNoise(noise) != null)
-            previousBiome = GetBiomeByNoise(noise);
-
+        if (CaveDetailTools.GetBiomeByPosition(player.position) != null)
+            previousBiome = CaveDetailTools.GetBiomeByPosition(player.position);
 
     }
 
-    private Biome GetBiomeByNoise(float noise)
-    {
-        Color matchingColor = biomeGradient.Evaluate(noise);
-
-        for(int i = 0;i < biomes.Length; i++)
-        {
-            if (biomes[i].caveColor == matchingColor)
-            {
-                return biomes[i];
-
-            }
-        }
-
-        return null;
-    }
-
-    public void AddDetails(Vector3 position, float height)
-    {
-        /*
-        float oreNoise = PerlinNoise3D(position * 50f);
-        if(Mathf.Abs(height - CaveMeshSettings.heightThreshold) < 0.02f && oreNoise < 0.1f)
-            GameObject ore = 
-        */
-    }
+    
 
 
-    private static float PerlinNoise3D(Vector3 pos)
-    {
-        float xy = Mathf.PerlinNoise(pos.x, pos.y);
-        float xz = Mathf.PerlinNoise(pos.x, pos.z);
-        float yz = Mathf.PerlinNoise(pos.y, pos.z);
 
-        float yx = Mathf.PerlinNoise(pos.y, pos.x);
-        float zx = Mathf.PerlinNoise(pos.z, pos.x);
-        float zy = Mathf.PerlinNoise(pos.z, pos.y);
 
-        return (xy + xz + yz + yx + zx + zy) / 6;
-    }
+
 
 }

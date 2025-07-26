@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8601430556786577606}
   - component: {fileID: 5296214192885727936}
   - component: {fileID: 3243218702788755427}
+  - component: {fileID: -518074877218538488}
   m_Layer: 18
   m_Name: MeshObject
   m_TagString: Untagged
@@ -106,3 +107,23 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-518074877218538488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4852046306605111728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43b815c9127e87e45a6bdb660918c1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biome:
+    name: 
+    caveColor: {r: 0, g: 0, b: 0, a: 0}
+    fogColor: {r: 0, g: 0, b: 0, a: 0}
+    rarity: 1
+    ambientParticle: {fileID: 0}
+    oreObject: {fileID: 0}
+    oreObjects: []
