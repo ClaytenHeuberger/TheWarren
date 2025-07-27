@@ -54,15 +54,7 @@ public class CaveMeshHandler : MonoBehaviour
             return 1;
         }
         
-        // Clear area for outposts
-        float radius = 20f;
-        for (int i = 0;i < Outposts.positions.Count; i++)
-        {
-            if(Vector3.Distance(position, Outposts.positions[i]) < radius)
-            {
-                return 1;
-            }
-        }
+       
 
         float noiseScale = CaveMeshSettings.noiseScale;
         float chunkSize = CaveMeshSettings.chunkSize;
@@ -72,6 +64,33 @@ public class CaveMeshHandler : MonoBehaviour
         noise += PerlinNoise3D(position.x / chunkSize * (noiseScale * 1.2f), position.y / chunkSize * (noiseScale * 1.2f), position.z / chunkSize * (noiseScale * 1.2f));
         noise /= 3;
         noise += noiseMod;
+
+
+        // Clear area for outposts
+        float radius = 40f;
+        for (int i = 0; i < Outposts.positions.Count; i++)
+        {
+            float distance = Vector3.Distance(position, Outposts.positions[i]);
+
+            float smoothingRadius = 20f;
+            if (distance > radius && distance < radius + smoothingRadius)
+            {
+                float distFromDir1 = Vector3.Magnitude(Vector3.Cross(Vector3.right, position - Outposts.positions[i]));
+                float distFromDir2 = Vector3.Magnitude(Vector3.Cross(Vector3.forward, position - Outposts.positions[i]));
+
+                float value1 = (distance - 19f) / (distFromDir1 + distFromDir2);
+
+                float distRatio = (distance - radius) / smoothingRadius;
+
+                return Mathf.Lerp(value1, noise, distRatio);
+            }
+
+            if (distance < radius)
+            {
+                return 1;
+            }
+        }
+
 
         return noise;
     }

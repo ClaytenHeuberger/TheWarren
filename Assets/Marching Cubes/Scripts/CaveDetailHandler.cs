@@ -16,6 +16,10 @@ public class Biome
     public GameObject oreObject;
     [HideInInspector]
     public Queue<GameObject> oreObjects = new Queue<GameObject>();
+
+    public GameObject pillarObject;
+    [HideInInspector]
+    public Queue<GameObject> pillarObjects = new Queue<GameObject>();
 }
 
 public static class CaveDetailTools
@@ -69,12 +73,20 @@ public static class CaveDetailTools
             }
 
             // PILLARS //
-
+            /*
             float pillarNoise = GetPillarNoise(position);
             if (height > 0.9f && pillarNoise > pillarThreshold)
             {
+                GameObject pillar = currentBiome.pillarObjects.Dequeue();
 
+                if(pillar != null)
+                {
+                    currentBiome.pillarObjects.Enqueue(pillar);
+
+                    pillar.GetComponent<Pillar>().SetPosition(position);
+                }
             }
+            */
         }
 
     }
@@ -110,6 +122,7 @@ public class CaveDetailHandler : MonoBehaviour
     [SerializeField] private float oreThreshold = 20.15329f;
 
     [Header("Pillars")]
+    [SerializeField] private int pillarsPerBiome = 30;
     [SerializeField] private float pillarScale = 300.15213f;
     [SerializeField] private float pillarThreshold = 1.33f;
 
@@ -152,12 +165,21 @@ public class CaveDetailHandler : MonoBehaviour
 
         for(int i = 0;i < biomes.Length;i++)
         {
+            // Spawn ores
             for (int j = 0; j < oresPerBiome; j++)
             {
                 GameObject newOre = Instantiate(biomes[i].oreObject);
                 newOre.SetActive(false);
                 newOre.transform.parent = transform;
                 biomes[i].oreObjects.Enqueue(newOre);
+            }
+
+            // Spawn Pillars
+
+            for(int j = 0;j < pillarsPerBiome; j++)
+            {
+                GameObject newPillar = Instantiate(biomes[i].pillarObject);
+                biomes[i].pillarObjects.Enqueue(newPillar);
             }
         }
 
@@ -187,7 +209,7 @@ public class CaveDetailHandler : MonoBehaviour
         Color col = biomeGradient.Evaluate(noise);
         caveMat.SetColor("_MainColor", col);
         RenderSettings.fogColor = col;
-        cam.backgroundColor = col;
+        cam.backgroundColor = col/2;
 
 
         if(CaveDetailTools.GetBiomeByPosition(player.position) != null)
