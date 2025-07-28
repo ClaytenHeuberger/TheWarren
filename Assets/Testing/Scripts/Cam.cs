@@ -9,23 +9,15 @@ public class Cam : MonoBehaviour
     public float rotSpeed = 1.0f;
 
 
-    [SerializeField] Transform startPos;
-    [SerializeField] float lagMagnitude = 10;
-    [SerializeField] float rotMultiplier = 10;
+    [SerializeField] Transform target;
+    [SerializeField] Transform player;
 
 
-    Vector3 prevPosition;
-    Quaternion prevRotation;
-
-    Vector3 targPos;
-    Vector3 targRot;
 
     void FixedUpdate()
     {
-        targPos = startPos.localPosition;
-        targRot = startPos.localEulerAngles;
 
-        
+        /*
 
         if(transform.parent.GetComponent<PlayerScript>().useJoystick)
         {
@@ -57,9 +49,12 @@ public class Cam : MonoBehaviour
 
             }
         }
+        */
 
+        Vector3 targetPos = target.position + transform.up * player.GetComponent<Rigidbody>().velocity.x * 10f;
+        transform.position = Vector3.Lerp(transform.position, target.position, followSpeed);
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, targPos, followSpeed);
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targRot), rotSpeed);
+        Quaternion targetRot = Quaternion.LookRotation((player.position + player.forward * 10000f) - transform.position, player.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed);
     }
 }

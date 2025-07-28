@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6700475119431259939}
   - component: {fileID: 5411527957346859911}
   - component: {fileID: 7943005708860260054}
-  m_Layer: 13
+  m_Layer: 18
   m_Name: IceChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float engineMaxPower = 400;
     [SerializeField] private float engineTimeToMax = 4f;
     [SerializeField] private float engineStartPower = 10f;
+    [SerializeField] private float scrollSensitivity = 2;
+    [SerializeField] private float crosshairSensitivity = 2f;
+    [SerializeField] private float mouseLimit = 40f;
 
     [Header("Object References")]
     [SerializeField] private Camera cam;
@@ -28,6 +33,11 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float FOVDistortionMagnitude = 20f;
     [SerializeField] private float FOVDistortionRate = 0.1f;
 
+    [Header("UI")]
+    [SerializeField] private RectTransform thrustArrowTransform;
+    [SerializeField] private RectTransform crosshairTransform;
+    [SerializeField] private RectTransform crosshairLineTransform;
+
     JoystickControls controls;
     Vector2 joystickInput;
     [HideInInspector]
@@ -39,7 +49,9 @@ public class PlayerScript : MonoBehaviour
     Rigidbody rb;
 
     float FOVStart;
-    [SerializeField] public float thrustRatio = 1;
+
+    [HideInInspector]
+    public float thrustRatio = 1;
 
 
     Vector2 mousePos = Vector2.zero;
@@ -59,7 +71,7 @@ public class PlayerScript : MonoBehaviour
         startMousePos = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 
-    // Update is called once per frame
+
     void FixedUpdate()
     {
 
@@ -67,36 +79,62 @@ public class PlayerScript : MonoBehaviour
         //Movement
         rb.AddForce(transform.forward * enginePower * Time.deltaTime * 100);
 
-        thrustRatio = enginePower / (engineMaxPower - engineStartPower);
-
+        thrustRatio = enginePower / engineMaxPower;
 
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, FOVStart + thrustRatio * FOVDistortionMagnitude, FOVDistortionRate);
 
-        if (Input.GetMouseButton(1) || Input.GetKey(KeyCode.Space) || joystickThrust)
+        if (mouseMode)
         {
-            if (gameHandler != null)
+            float delta = Input.mouseScrollDelta.y * scrollSensitivity;
+
+            if(delta != 0 && gameHandler != null && !gameHandler.started)
             {
-                if (!gameHandler.started)
-                {
-                    gameHandler.started = true;
-                    gameHandler.colorOverlay.enabled = false;
-                    gameHandler.promptText.gameObject.SetActive(false);
-                }
+                gameHandler.started = true;
+                gameHandler.colorOverlay.enabled = false;
+                gameHandler.promptText.gameObject.SetActive(false);
             }
 
-            if (enginePower <= 0)
-                enginePower = engineStartPower;
-            else if (enginePower < engineMaxPower)
-                enginePower += Time.deltaTime * (engineMaxPower / engineTimeToMax);
+            enginePower += delta;
 
+            if(enginePower < 0)
+                enginePower = 0;
+            else if(enginePower > engineMaxPower)
+                enginePower = engineMaxPower;
+
+            float currentAngle = Mathf.Repeat(thrustArrowTransform.eulerAngles.z + 180, 360) - 180;
+            float rot = ((20f - (enginePower / engineMaxPower) * 40f) - currentAngle) / (Time.deltaTime * 500f);
+            thrustArrowTransform.Rotate(0, 0, rot);
 
         }
-        else if(enginePower > 0)
+        else
         {
-            enginePower -= Time.deltaTime * (engineMaxPower / engineTimeToMax) * 5;
+
+            if (Input.GetMouseButton(1) || Input.GetKey(KeyCode.Space) || joystickThrust)
+            {
+                if (gameHandler != null)
+                {
+                    if (!gameHandler.started)
+                    {
+                        gameHandler.started = true;
+                        gameHandler.colorOverlay.enabled = false;
+                        gameHandler.promptText.gameObject.SetActive(false);
+                    }
+                }
+
+                if (enginePower <= 0)
+                    enginePower = engineStartPower;
+                else if (enginePower < engineMaxPower)
+                    enginePower += Time.deltaTime * (engineMaxPower / engineTimeToMax);
+
+
+            }
+            else if (enginePower > 0)
+            {
+                enginePower -= Time.deltaTime * (engineMaxPower / engineTimeToMax) * 5;
+            }
+            if (enginePower < 0)
+                enginePower = 0;
         }
-        if (enginePower < 0)
-            enginePower = 0;
 
         // Input for Pitch/Roll
 
@@ -147,22 +185,29 @@ public class PlayerScript : MonoBehaviour
 
             if (mouseMode)
             {
+                Vector2 middleOfScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 
-                mousePos += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+                Vector2 mouseDeltaRaw = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-                Vector2 offset = mousePos - startMousePos;
-                Vector2 clampedOffset = Vector2.ClampMagnitude(offset, Mathf.Min(rollTorque, pitchTorque));
-                if (offset.magnitude > Mathf.Min(rollTorque, pitchTorque))
-                {
-                    // Shift center so the stick remains in bounds
-                    startMousePos += offset - clampedOffset;
-                }
+                mousePos += crosshairSensitivity * mouseDeltaRaw;
+                mousePos = Vector2.ClampMagnitude(mousePos, mouseLimit);
 
-                // Now use the offset from the center for torque
-                Vector2 rollPitch = clampedOffset;
 
-                rb.AddTorque(transform.right * rollPitch.y * Time.deltaTime * 150);
-                rb.AddTorque(-transform.forward * rollPitch.x * Time.deltaTime * 200);
+                float valueToMult = Mathf.Pow(mousePos.magnitude / mouseLimit, 1.5f);
+
+                Vector2 valueToUse = mousePos * valueToMult;
+
+                rb.AddTorque(-transform.right * valueToUse.y * pitchTorque * Time.deltaTime);
+
+                rb.AddTorque(-transform.forward * valueToUse.x * rollTorque * Time.deltaTime);
+                rb.AddTorque(transform.up * valueToUse.x * rollTorque * Time.deltaTime / 5f);
+
+                Vector2 positionOnScreen = mousePos + middleOfScreen;
+
+                crosshairTransform.position = positionOnScreen;
+                crosshairLineTransform.sizeDelta = new Vector2(mousePos.magnitude, crosshairLineTransform.sizeDelta.y);
+                crosshairLineTransform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg);
+
             }
             else
             {
@@ -203,7 +248,11 @@ public class PlayerScript : MonoBehaviour
 
     //}
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(transform.position + transform.forward * 20f, 2f);
 
+    }
     private void OnEnable()
     {
         controls.Gameplay.Enable();

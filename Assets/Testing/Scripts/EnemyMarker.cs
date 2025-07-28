@@ -49,6 +49,7 @@ public class EnemyMarker : MonoBehaviour
             if(Vector3.Angle(heading, Camera.main.transform.forward) < sightAngle)
             {
 
+                screenPos.z = 1;
 
                 var tempColor = this_image.color;
                 tempColor.a = 1f;

@@ -100,7 +100,7 @@ public class OutpostHandler : MonoBehaviour
     {
         positions = new List<Vector3>();
 
-        Vector3 outpost = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.01f, 10, 500);
+        Vector3 outpost = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.001f, 10, 500);
         Outposts.positions.Add(outpost);
         GameObject newOutpost = Instantiate(outpostObject, outpost, Quaternion.identity);
         newOutpost.transform.localScale = Vector3.one * Outposts.radius;
