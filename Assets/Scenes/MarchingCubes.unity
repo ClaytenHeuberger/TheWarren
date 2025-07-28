@@ -27671,14 +27671,14 @@ PrefabInstance:
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[10].clip
       value: 
-      objectReference: {fileID: 8300000, guid: 762a07d660f92ee4488f970b74316c5b, type: 3}
+      objectReference: {fileID: 8300000, guid: a81ad943a5fe2d940afc3d591f04bb31, type: 3}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[10].loop
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[10].name
-      value: TextSound
+      value: OpenBayDoor
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[1].pitch
@@ -27810,7 +27810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[10].volume
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[1].doppler
@@ -27898,7 +27898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[10].playOnAwake
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2094743453115475469, guid: a2d6e60e14269444db72bfe3e0c5a636, type: 3}
       propertyPath: sounds.Array.data[1].spacialBlend
@@ -44024,7 +44024,6 @@ GameObject:
   - component: {fileID: 1291435602}
   - component: {fileID: 1291435604}
   - component: {fileID: 1291435603}
-  - component: {fileID: 1291435605}
   m_Layer: 12
   m_Name: Crosshair2
   m_TagString: Untagged
@@ -44089,21 +44088,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1291435601}
   m_CullTransparentMesh: 1
---- !u!114 &1291435605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291435601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d32b52270feaaf4cb9a4f2c60342c3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 181029548}
-  cam: {fileID: 770081321}
-  distance: 10
 --- !u!1 &1315991270
 GameObject:
   m_ObjectHideFlags: 0
