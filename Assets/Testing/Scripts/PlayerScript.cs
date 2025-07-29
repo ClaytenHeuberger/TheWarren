@@ -38,6 +38,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private RectTransform crosshairTransform;
     [SerializeField] private RectTransform crosshairLineTransform;
 
+    [Header("Other")]
+    [SerializeField] private float outpostGravityStrength = 10f;
+
     JoystickControls controls;
     Vector2 joystickInput;
     [HideInInspector]
@@ -70,7 +73,21 @@ public class PlayerScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         startMousePos = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
+    Quaternion GetYawOnlyRotation(Transform t)
+    {
+        // Get the current forward direction, but zero out vertical component to flatten it
+        Vector3 forward = t.forward;
+        forward.y = 0f;
 
+        // If looking straight up/down, fallback to projecting right vector
+        if (forward.sqrMagnitude < 0.001f)
+        {
+            forward = Vector3.ProjectOnPlane(t.right, Vector3.up);
+        }
+
+        // Build a rotation that keeps yaw but removes pitch and roll
+        return Quaternion.LookRotation(forward.normalized, Vector3.up);
+    }
 
     void FixedUpdate()
     {
@@ -82,6 +99,12 @@ public class PlayerScript : MonoBehaviour
         thrustRatio = enginePower / engineMaxPower;
 
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, FOVStart + thrustRatio * FOVDistortionMagnitude, FOVDistortionRate);
+
+        if (CaveDetailTools.inOutpost)
+        {
+            Quaternion targetRotation = GetYawOnlyRotation(transform);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * outpostGravityStrength);
+        }
 
         if (mouseMode)
         {

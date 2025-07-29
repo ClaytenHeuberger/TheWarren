@@ -33,6 +33,7 @@ public static class CaveDetailTools
     public static float oreThreshold;
     public static float pillarThreshold;
     public static Biome currentBiome;
+    public static bool inOutpost = false;
     public static Biome GetBiomeByPosition(Vector3 position)
     {
         float noise = GetBiomeNoise(position);
@@ -126,11 +127,16 @@ public class CaveDetailHandler : MonoBehaviour
     [SerializeField] private float pillarScale = 300.15213f;
     [SerializeField] private float pillarThreshold = 1.33f;
 
+    [Header("Outposts")]
+    [SerializeField] private Color outpostFogColor;
+    [SerializeField] private float outpostFogBlendRate = 10f;
 
     Gradient biomeGradient;
     Biome currentBiome;
     Biome previousBiome;
     Camera cam;
+
+    Color tempFogColor;
     void Start()
     {
         cam = Camera.main;
@@ -211,8 +217,25 @@ public class CaveDetailHandler : MonoBehaviour
         RenderSettings.fogColor = col;
         cam.backgroundColor = col/2;
 
+        for(int i = 0;i < Outposts.positions.Count;i++)
+        {
+            if(Vector3.Distance(player.position, Outposts.positions[i]) < Outposts.radius)
+            {
+                CaveDetailTools.inOutpost = true;
+            }
+            else
+            {
+                CaveDetailTools.inOutpost = false;
+            }
+        }
 
-        if(CaveDetailTools.GetBiomeByPosition(player.position) != null)
+        if(CaveDetailTools.inOutpost)
+            RenderSettings.fogColor = outpostFogColor;
+        else
+            RenderSettings.fogColor = col;
+
+
+        if (CaveDetailTools.GetBiomeByPosition(player.position) != null)
             currentBiome = CaveDetailTools.GetBiomeByPosition(player.position);
 
         if (previousBiome != null && currentBiome != previousBiome)
