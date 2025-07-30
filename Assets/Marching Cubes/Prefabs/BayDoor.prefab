@@ -74,7 +74,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 40, y: 30, z: 40}
+  m_Size: {x: 50, y: 40, z: 60}
   m_Center: {x: 0.000044584296, y: -0.16075154, z: 0.98769975}
 --- !u!82 &2180349649467106861
 AudioSource:

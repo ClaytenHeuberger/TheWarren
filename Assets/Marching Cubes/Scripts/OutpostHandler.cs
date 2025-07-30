@@ -6,15 +6,57 @@ using UnityEngine;
 
 public static class Outposts
 {
-    public static List<Vector3> positions = new List<Vector3>();
-    public static float radius = 40f;
+    public static List<Outpost> outposts = new List<Outpost>();
+    public static float radius = 50f;
     public static GameObject outpostObject;
+}
+
+public class Outpost
+{
+    public string name;
+    public Vector3 position;
+    public List<Bounty> bounties = new List<Bounty>();
+
+    public void SpawnBounty(float maxRadius)
+    {
+
+    }
+}
+
+
+
+public class OutpostHandler : MonoBehaviour
+{
+    [SerializeField] private GameObject outpostObject;
+    List<Vector3> positions;
+    void Start()
+    {
+        positions = new List<Vector3>();
+
+        Outpost outpost = new Outpost();
+        outpost.position = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.005f, 10, 500);
+        Outposts.outposts.Add(outpost);
+
+        GameObject newOutpost = Instantiate(outpostObject, outpost.position, Quaternion.identity);
+        newOutpost.transform.localScale = Vector3.one * Outposts.radius;
+        Outposts.outpostObject = newOutpost;
+    }
+
+    private void Update()
+    {
+        for(int i = 0;i < positions.Count-1;i++)
+        {
+            Debug.DrawLine(positions[i], positions[i + 1]);
+        }
+    }
+
+
 
 }
 
 public static class GradientDescent
 {
-    
+
     public static Vector3 FindLocalMax(Vector3 startPos, float scale, int stepSize, int maxSteps)
     {
         Vector3 currentPos = startPos;
@@ -78,6 +120,7 @@ public static class GradientDescent
         return currentPos;
     }
 
+
     private static float PerlinNoise3D(Vector3 pos)
     {
         float xy = Mathf.PerlinNoise(pos.x, pos.y);
@@ -91,29 +134,4 @@ public static class GradientDescent
         return (xy + xz + yz + yx + zx + zy) / 6;
     }
 }
-public class OutpostHandler : MonoBehaviour
-{
-    [SerializeField] private Transform debug;
-    [SerializeField] private GameObject outpostObject;
-    List<Vector3> positions;
-    void Start()
-    {
-        positions = new List<Vector3>();
 
-        Vector3 outpost = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.005f, 10, 500);
-        Outposts.positions.Add(outpost);
-        GameObject newOutpost = Instantiate(outpostObject, outpost, Quaternion.identity);
-        newOutpost.transform.localScale = Vector3.one * Outposts.radius;
-        Outposts.outpostObject = newOutpost;
-        debug.position = outpost;
-    }
-
-    private void Update()
-    {
-        for(int i = 0;i < positions.Count-1;i++)
-        {
-            Debug.DrawLine(positions[i], positions[i + 1]);
-        }
-    }
-
-}

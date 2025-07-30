@@ -7,6 +7,8 @@ using UnityEngine.Experimental.Rendering;
 
 public class TunnelEnemyAI : MonoBehaviour
 {
+    [SerializeField] private float difficultyMultiplier = 1f;
+
     [SerializeField] private float rollTorque = 30f;
     [SerializeField] private float pitchTorque = 30f;
     [SerializeField] private float thrust = 30f;
@@ -21,7 +23,7 @@ public class TunnelEnemyAI : MonoBehaviour
     List<RaycastHit> hits = new List<RaycastHit>();
     private void Start()
     {
-        mask = LayerMask.GetMask("Cave");
+        mask = LayerMask.GetMask("Cave", "CaveTranslucent");
         rb = GetComponent<Rigidbody>();
         targetPos = transform.position + transform.forward * 2f;
     }
@@ -171,11 +173,11 @@ public class TunnelEnemyAI : MonoBehaviour
 
 
 
-        rb.AddTorque(pitch * pitchTorque * transform.right * Time.deltaTime);
-        rb.AddTorque(roll * rollTorque * transform.forward * Time.deltaTime);
+        rb.AddTorque(pitch * pitchTorque * transform.right * Time.deltaTime * difficultyMultiplier);
+        rb.AddTorque(roll * rollTorque * transform.forward * Time.deltaTime * difficultyMultiplier);
 
         if (!cutEngine)
-            rb.AddForce(transform.forward * thrust * Time.deltaTime);
+            rb.AddForce(transform.forward * thrust * Time.deltaTime * difficultyMultiplier);
 
 
         float velMag = rb.velocity.magnitude;

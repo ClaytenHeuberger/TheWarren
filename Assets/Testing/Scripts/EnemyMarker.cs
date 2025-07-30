@@ -28,8 +28,8 @@ public class EnemyMarker : MonoBehaviour
 
         this_image.color = markerColor * 2f;
 
-        Canvas canvas = FindObjectOfType<Canvas>();
-        transform.SetParent(canvas.transform);
+        //Canvas canvas = FindObjectOfType<Canvas>();
+        //transform.SetParent(canvas.transform);
     }
 
     void FixedUpdate()

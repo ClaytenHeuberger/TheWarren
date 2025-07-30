@@ -215,11 +215,11 @@ public class CaveDetailHandler : MonoBehaviour
         Color col = biomeGradient.Evaluate(noise);
         caveMat.SetColor("_MainColor", col);
         RenderSettings.fogColor = col;
-        cam.backgroundColor = col/2;
+        cam.backgroundColor = col;
 
-        for(int i = 0;i < Outposts.positions.Count;i++)
+        for(int i = 0;i < Outposts.outposts.Count;i++)
         {
-            if(Vector3.Distance(player.position, Outposts.positions[i]) < Outposts.radius)
+            if(Vector3.Distance(player.position, Outposts.outposts[i].position) < Outposts.radius)
             {
                 CaveDetailTools.inOutpost = true;
             }

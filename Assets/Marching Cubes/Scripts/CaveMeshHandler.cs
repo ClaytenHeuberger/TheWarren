@@ -67,25 +67,24 @@ public class CaveMeshHandler : MonoBehaviour
 
 
         // Clear area for outposts
-        float radius = 40f;
-        for (int i = 0; i < Outposts.positions.Count; i++)
+        for (int i = 0; i < Outposts.outposts.Count; i++)
         {
-            float distance = Vector3.Distance(position, Outposts.positions[i]);
+            float distance = Vector3.Distance(position, Outposts.outposts[i].position);
 
-            float smoothingRadius = 20f;
-            if (distance > radius && distance < radius + smoothingRadius)
+            float smoothingRadius = Outposts.radius * 0.3f;
+            if (distance > Outposts.radius && distance < Outposts.radius + smoothingRadius)
             {
-                float distFromDir1 = Vector3.Magnitude(Vector3.Cross(Vector3.right, position - Outposts.positions[i]));
-                float distFromDir2 = Vector3.Magnitude(Vector3.Cross(Vector3.forward, position - Outposts.positions[i]));
+                float distFromDir1 = Vector3.Magnitude(Vector3.Cross(Vector3.right, position - Outposts.outposts[i].position));
+                float distFromDir2 = Vector3.Magnitude(Vector3.Cross(Vector3.forward, position - Outposts.outposts[i].position));
 
-                float value1 = (distance - 19f) / (distFromDir1 + distFromDir2);
+                float value1 = (distance - 22f) / (distFromDir1 + distFromDir2);
 
-                float distRatio = (distance - radius) / smoothingRadius;
+                float distRatio = (distance - Outposts.radius) / smoothingRadius;
 
                 return Mathf.Lerp(value1, noise, distRatio);
             }
 
-            if (distance < radius)
+            if (distance < Outposts.radius)
             {
                 return 1;
             }
