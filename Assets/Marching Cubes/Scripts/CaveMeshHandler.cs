@@ -49,7 +49,7 @@ public class CaveMeshHandler : MonoBehaviour
         float noiseMod = 0f;
 
         
-        if (Vector3.Distance(position, playerStartPos) < 20)
+        if (Vector3.Distance(position, Vector3.zero) < 20)
         {
             return 1;
         }
@@ -116,7 +116,12 @@ public class CaveMeshHandler : MonoBehaviour
                 return meshObjects[i];
             }
         }
-        return null;
+
+        GameObject newMesh = Instantiate(meshObject, Vector3.zero, Quaternion.identity);
+        meshObjects.Add(newMesh);
+        newMesh.SetActive(false);
+        
+        return newMesh;
     } 
     private static void CheckMesh(List<CaveMeshGenerator> generators, GameObject mesh)
     {

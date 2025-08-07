@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 
 public class Cam : MonoBehaviour
 {
@@ -9,13 +10,30 @@ public class Cam : MonoBehaviour
     public float rotSpeed = 1.0f;
 
 
-    [SerializeField] Transform target;
-    [SerializeField] Transform player;
+    Transform player;
 
 
+    private void LateUpdate()
+    {
+        if(PlayerServerController.Local != null)
+        {
+            player = FindObjectOfType<PlayerScript>().transform;
+        }
+    }
 
     void FixedUpdate()
     {
+
+        if (player != null)
+        {
+
+
+            Vector3 targetPos = player.position - player.forward * 0.8f; // + transform.up * player.GetComponent<Rigidbody>().velocity.x * 10f
+            transform.position = Vector3.Lerp(transform.position, targetPos, followSpeed);
+
+            Quaternion targetRot = Quaternion.LookRotation((player.position + player.forward * 10000f) - transform.position, player.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed);
+        }
 
         /*
 
@@ -51,10 +69,7 @@ public class Cam : MonoBehaviour
         }
         */
 
-        Vector3 targetPos = target.position + transform.up * player.GetComponent<Rigidbody>().velocity.x * 10f;
-        transform.position = Vector3.Lerp(transform.position, target.position, followSpeed);
 
-        Quaternion targetRot = Quaternion.LookRotation((player.position + player.forward * 10000f) - transform.position, player.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed);
+
     }
 }

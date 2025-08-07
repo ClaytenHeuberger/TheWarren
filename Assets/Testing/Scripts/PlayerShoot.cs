@@ -12,10 +12,12 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] private GameObject Bullet;
     [SerializeField] private GameObject Player;
     [SerializeField] private Transform Cam;
-    [SerializeField] private AudioManager audioManager;
     [SerializeField] private GameHandler gameHandler;
 
     float time = 0;
+
+    AudioManager audioManager;
+
 
     JoystickControls controls;
     bool joystickShoot = false;
@@ -28,6 +30,8 @@ public class PlayerShoot : MonoBehaviour
     {
         time = cooldown;
         gameHandler = FindObjectOfType<GameHandler>();
+        audioManager = FindObjectOfType<AudioManager>();
+        Cam = Camera.main.transform;
     }
 
     void Update()

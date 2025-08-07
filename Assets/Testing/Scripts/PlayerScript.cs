@@ -6,9 +6,14 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using SpacetimeDB;
+using SpacetimeDB.Types;
+using System.Linq;
+
 
 public class PlayerScript : MonoBehaviour
 {
+    public string Username = "Electrix8924";
 
     [Header("Input Variables")]
     public bool useJoystick = false;
@@ -23,7 +28,6 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float mouseLimit = 40f;
 
     [Header("Object References")]
-    [SerializeField] private Camera cam;
     [SerializeField] private GameObject ping;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private GameHandler gameHandler;
@@ -56,6 +60,7 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector]
     public float thrustRatio = 1;
 
+    Camera cam;
 
     Vector2 mousePos = Vector2.zero;
     Vector2 startMousePos = Vector2.zero;
@@ -67,7 +72,9 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        gameHandler = FindObjectOfType<GameHandler>(); 
+        gameHandler = FindObjectOfType<GameHandler>();
+
+        cam = Camera.main;
         FOVStart = cam.fieldOfView;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -260,6 +267,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         rb.velocity = transform.forward * rb.velocity.magnitude;
+
     }
 
     //private void Update()
@@ -326,4 +334,5 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
+
 }

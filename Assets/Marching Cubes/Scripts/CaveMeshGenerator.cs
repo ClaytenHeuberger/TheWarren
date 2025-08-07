@@ -27,7 +27,7 @@ public class CaveMeshGenerator : MonoBehaviour
     [SerializeField] private GameObject meshObject;
     public GameObject player;
 
-    [SerializeField] private Transform target;
+    //[SerializeField] private Transform target;
 
     [SerializeField] float gizmosResolution = 1;
 

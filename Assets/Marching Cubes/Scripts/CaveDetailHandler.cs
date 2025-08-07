@@ -12,6 +12,8 @@ public class Biome
     public Color caveColor; //Note: All colors have to have an alpha of '1', or it throws errors
     public Color fogColor;
     public float rarity = 1f;
+    public GameObject ambientParticleObject;
+    [HideInInspector]
     public ParticleSystem ambientParticle;
     public GameObject oreObject;
     [HideInInspector]
@@ -171,6 +173,13 @@ public class CaveDetailHandler : MonoBehaviour
 
         for(int i = 0;i < biomes.Length;i++)
         {
+            // Spawn Ambient Particle Effect
+            GameObject newParticleSystem = Instantiate(biomes[i].ambientParticleObject);
+            newParticleSystem.transform.parent = cam.transform;
+            newParticleSystem.transform.localPosition = Vector3.zero;
+            newParticleSystem.transform.localEulerAngles = Vector3.zero;
+            biomes[i].ambientParticle = newParticleSystem.GetComponent<ParticleSystem>();
+
             // Spawn ores
             for (int j = 0; j < oresPerBiome; j++)
             {

@@ -34,7 +34,7 @@ public class OutpostHandler : MonoBehaviour
         positions = new List<Vector3>();
 
         Outpost outpost = new Outpost();
-        outpost.position = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.005f, 10, 500);
+        outpost.position = GradientDescent.FindLocalMax(CaveMeshHandler.playerStartPos, 0.001f, 10, 500);
         Outposts.outposts.Add(outpost);
 
         GameObject newOutpost = Instantiate(outpostObject, outpost.position, Quaternion.identity);

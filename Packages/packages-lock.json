@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.clockworklabs.spacetimedbsdk": {
+      "version": "https://github.com/clockworklabs/com.clockworklabs.spacetimedbsdk.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "924f718949fefedd9de33525fdb0a9323ae7136a"
+    },
     "com.jimmycushnie.noisynodes": {
       "version": "https://github.com/JimmyCushnie/Noisy-Nodes.git",
       "depth": 0,
